@@ -1,3 +1,10 @@
+# load modules
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.cluster import KMeans
+
+
 def cluster_regression(X, y):
     """ Performs clustering on dataset. Learn a regression model over clusters accumulatively.
     
@@ -33,6 +40,7 @@ def cluster_regression(X, y):
                                                key=lambda el: el[1], 
                                                reverse=True)]
     # Regression
+    lr = LinearRegression()
     X_cum = X_train[km.labels_ == cluster_sorted_key[0]]
     y_cum = y_train[km.labels_ == cluster_sorted_key[0]]
     for cl in cluster_sorted_key[1:]:
