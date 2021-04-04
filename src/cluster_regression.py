@@ -6,7 +6,8 @@ from sklearn.cluster import KMeans
 
 
 def cluster_regression(X, y):
-    """ Performs clustering on dataset. Learn a regression model over clusters accumulatively.
+    """ Performs clustering on dataset. Learn a regression model over clusters 
+    accumulatively.
     
     input:
     ------
@@ -41,10 +42,20 @@ def cluster_regression(X, y):
                                                reverse=True)]
     # Regression
     lr = LinearRegression()
-    X_cum = X_train[km.labels_ == cluster_sorted_key[0]]
-    y_cum = y_train[km.labels_ == cluster_sorted_key[0]]
-    for cl in cluster_sorted_key[1:]:
+    cm_train_score = []
+    test_score = []
+    for cl in cluster_sorted_key:
+        if cl == cluster_sorted_key[0]:
+            # initialize with the fist cluster
+            X_cum = X_train[km.labels_ == cluster_sorted_key[0]]
+            y_cum = y_train[km.labels_ == cluster_sorted_key[0]]
+        else:
+            X_cum = np.r_[X_cum, X_train[km.labels_ == cluster_sorted_key[cl]]]
+            y_cum = np.r_[y_cum, y_train[km.labels_ == cluster_sorted_key[cl]]]
+
         lr.fit(X_cum, y_cum)
-        print("Score: {:.3}".format(lr.score(X_test, y_test)))
-        X_cum = np.r_[X_cum, X_train[km.labels_ == cluster_sorted_key[cl]]]
-        y_cum = np.r_[y_cum, y_train[km.labels_ == cluster_sorted_key[cl]]]
+        print("Cumulative Train Score: {:04.3f}, Test Score: {:04.3f}".\
+                                            format(lr.score(X_cum, y_cum), 
+                                                   lr.score(X_test, y_test)))
+        cm_train_score.append(lr.score(X_cum, y_cum))
+        test_score.append(lr.score(X_test, y_test))
