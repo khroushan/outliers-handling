@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+\begin{document}
+%%%%%%%%%% 
+\section{Introduction}
+
+In the last few chapters, we have tried to develop a model to estimate the product cost. There are two main problems that can hinder us to achieve a high performance, namely, presence of {\bf Outliers} and {\bf Novelty}. These two concepts prevent the model to make a good estimation either by decieving or by not approprietly extrapolating to the new data points.
+
+%%%%%%%%%% 
+\section{Definition: Outliers vs. Novelty}
+
+\begin{enumerate}
+\item Add a formal definition for outlier and novelty.
+\item Make few actual or fictitious, relevant or errelevant examples from industry.
+\item How these two concepts are different from theoritical and practical perspective?
+  
+\end{enumerate}
+
+%%%%%%%%%%
+\section{Approaches}
+Here we take two main approches toward the problem. (i){\bf Supervised} and (ii) {\bf Unsupervised} methods.
+
+
+%%%%%%%%%% 
+\section{Unsupervised Approaches}
+What are the advantages?
+
+%%%%%
+\subsection{Simple statistical tools}
+
+Comparing the distance of data point to the center of data and variation of data.
+
+%%%%%
+\subsection{}
+
+Extend the idea from previous section for a not-unimodal data distribution. In such case the previous recipe fails. What we can do is to compare the distance againt the local density.
+
+The local density is studies by {\bf KNN}
+
+%%%%%
+\subsection{Isolation Forest}
+
+Outliers have shorter tree branch length compare to the outliers
+
+%%%%%%%%%% 
+\section{Supervised}
+
+%%%%%
+\subsection{Robust Regression on clustered data}
+
+
+%%%%%%%%%%
+\section{Summary}
+
+
+%%%%%%%%%% 
+\begin{thebibliography}{10}
+
+\bibitem{lof} Breunig, Markus M., et al. ``LOF: identifying density-based local outliers.'' {\em Proceedings of the 2000 ACM SIGMOD international conference on Management of data.} 2000.
+  
+\bibitem{iso_forest} Liu, Fei Tony, Kai Ming Ting, and Zhi-Hua Zhou. ``Isolation forest.'' {\em 2008 eighth ieee international conference on data mining. IEEE,} 2008.
+
+\bibitem{high_dim} Sch\"{o}lkopf, Bernhard, et al. ``Estimating the support of a high-dimensional distribution.'' {\em Neural computation 13.7} (2001): 1443-1471.
+
+\end{thebibliography}
+
+\end{document}
