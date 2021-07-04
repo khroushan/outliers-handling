@@ -1,60 +1,66 @@
 import numpy as np
 import numpy.random as rnd
 
+from sklearn.datasets import make_blobs
 
-# parameters 
-size_data = 500
-ratio_outliers = 0.1
-size_outliers = int(ratio_outliers*size_data)
-size_inliers = size_data - size_outliers
 
-# Generate one cluster of data for inliers
-X_in, _ = make_blobs(n_samples=size_inliers, n_features=2, centers=1)
-a1 = 1.2
-a2 = 2.1
-# target: linear function of features
-y_in = a1*X_in[:,0] + a2*X_in[:,1] + rnd.rand(size_inliers)
-
-# outliers
-X_out, _ = make_blobs(n_samples=size_outliers, n_features=2, centers=1)
-a1 = 1.2
-a2 = 2.1
-# target: just a random noise in the same range of inlier data
-y_out = (y_in.max() - y_in.min()) * rnd.rand(size_outliers) 
-
-X = np.r_[X_in, X_out]
-y = np.r_[y_in, y_out]
-
-fig, ax = pl.subplots(1,2, figsize=(12,4))
-ax[0].scatter(X[:,0], y)
-ax[1].scatter(X[:,1], y)
-
-class DataGenerator:
-    """ Class to generate different form of sysnthesis dataset. It is 
-    an extension to the `sklearn.data` module for generating
-    consistent `inlier`, `outlier` and `novelty` datasets. """
+class ToyDataGenerator():
     
-    def __init__(self):
-        self.inlier_size = inlier_size
-        self.outlier_size = outlier_size
-        self.novelty_size = novelty_size
+    def __init__(self, 
+                 n_inliers, 
+                 n_features,
+                 random_state=0):
         
-    def inlier_generator(self):
-        """ To generate inlier dataset """
-        
-        
-    def outlier_generator(self):
-        """ To generate inlier dataset """
-        
-    def novelty_generator(self):
-        """ To generate inlier dataset """
-  
-    def target_generator(self, order=1):
-        """ To generate target for inlier and outlier according to given order.
-        input:
-        ------
-        order: int, (default = 1), order of dependency to the features
-        """
-        
-        
-        self.y = y
+        self.n_inliers = n_inliers
+        self.n_features = n_features
+        self.blobs_params = dict(random_state=0, 
+                                 n_samples=self.n_inliers, 
+                                 n_features=self.n_features)
+
+    def feature_generator(self, 
+                          centers=None, 
+                          cluster_std=None):
+        if not centers:
+            centers=np.random.rand(self.n_features, self.n_features)
+        if not cluster_std:
+            cluster_std = 0.5
+
+        X, clust = make_blobs(centers=centers, 
+                           cluster_std=cluster_std,
+                           **self.blobs_params)
+        return X
+
+    def target_generator_independent(self, 
+                                     X, 
+                                     degrees=1, 
+                                     coeffs=None):
+        """ Generate target for given numerical features."""
+        y = np.zeros(X.shape[0])
+
+        for dg in range(degrees):
+            indxs = np.random.choice(X.shape[1], dg)
+            coefs = np.random.randint(-4, 4, size=len(indxs))
+            print('Coefficients are', coefs)
+            print('indeces are', indxs)
+            for c, indx in zip(coefs, indxs):
+                y += c*X[:,indx]
+        return y
+
+    def outlier_generator(self, 
+                          X, 
+                          y, 
+                          ratio=0.1):
+        """ Generate outliers in the range of dataset."""
+        X_min = X.min(axis=0)
+        X_max = X.max(axis=0)
+        y_min = y.min()
+        y_max = y.max()
+
+        N_outlier = int(X.shape[0]*ratio)
+        X_outlier = np.zeros((N_outlier, X.shape[1]))
+        for i in range(X.shape[1]):
+            X_outlier[:,i] = np.random.uniform(X_min[i], X_max[i], N_outlier)
+
+        y_outlier = np.random.uniform(y_min, y_max, N_outlier)
+
+        return X_outlier, y_outlier
